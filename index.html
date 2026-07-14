@@ -6,48 +6,199 @@
     name="viewport"
     content="width=device-width, initial-scale=1.0"
   >
-  <title>Stephni and Matthew Wedding Countdown</title>
+
+  <title>Stephni & Matthew Wedding Countdown</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     html,
     body {
       margin: 0;
       padding: 0;
-      background: #faf4ea;
-      overflow: hidden;
+      width: 100%;
+      background-color: #faf4ea;
+      font-family: Arial, sans-serif;
     }
 
-    .countdown-wrapper {
+    .countdown-section {
       width: 100%;
-      min-height: 180px;
+      min-height: 230px;
+      padding: 24px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #faf4ea;
+      color: #36463e;
+      text-align: center;
+    }
+
+    .countdown-title {
+      margin: 0 0 22px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(20px, 4vw, 30px);
+      font-weight: normal;
+      letter-spacing: 0.04em;
+    }
+
+    .countdown {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      justify-content: center;
+      gap: clamp(8px, 2.5vw, 24px);
+    }
+
+    .time-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 62px;
+    }
+
+    .circle {
+      width: clamp(62px, 15vw, 112px);
+      height: clamp(62px, 15vw, 112px);
+      border: 2px solid #75885b;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #faf4ea;
-      box-sizing: border-box;
-      padding: 10px;
+      background-color: #faf4ea;
+    }
+
+    .number {
+      color: #2f5a4d;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(24px, 6vw, 48px);
+      line-height: 1;
+    }
+
+    .label {
+      margin-top: 10px;
+      color: #75885b;
+      font-size: clamp(9px, 2vw, 13px);
+      font-weight: bold;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .finished-message {
+      display: none;
+      color: #2f5a4d;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(25px, 5vw, 40px);
+    }
+
+    @media (max-width: 500px) {
+      .countdown-section {
+        min-height: 190px;
+        padding: 18px 6px;
+      }
+
+      .countdown-title {
+        margin-bottom: 16px;
+      }
+
+      .countdown {
+        gap: 6px;
+      }
+
+      .label {
+        letter-spacing: 0.05em;
+      }
     }
   </style>
 </head>
 
 <body>
-  <div class="countdown-wrapper">
-    <script src="https://cdn.logwork.com/widget/countdown.js"></script>
-
-    <a
-      href="https://logwork.com/countdown-timer"
-      class="countdown-timer"
-      data-style="circles"
-      data-width="595"
-      data-timezone="Africa/Johannesburg"
-      data-textcolor="#36463e"
-      data-date="2027-09-17 17:00"
-      data-background="#faf4ea"
-      data-digitscolor="#2f5a4d"
-      data-unitscolor="#75885b"
-    >
+  <section class="countdown-section">
+    <h1 class="countdown-title">
       Our Wedding Weekend Begins In…
-    </a>
-  </div>
+    </h1>
+
+    <div class="countdown" id="countdown">
+      <div class="time-block">
+        <div class="circle">
+          <span class="number" id="days">000</span>
+        </div>
+        <span class="label">Days</span>
+      </div>
+
+      <div class="time-block">
+        <div class="circle">
+          <span class="number" id="hours">00</span>
+        </div>
+        <span class="label">Hours</span>
+      </div>
+
+      <div class="time-block">
+        <div class="circle">
+          <span class="number" id="minutes">00</span>
+        </div>
+        <span class="label">Minutes</span>
+      </div>
+
+      <div class="time-block">
+        <div class="circle">
+          <span class="number" id="seconds">00</span>
+        </div>
+        <span class="label">Seconds</span>
+      </div>
+    </div>
+
+    <div class="finished-message" id="finished-message">
+      The wedding weekend is here!
+    </div>
+  </section>
+
+  <script>
+    /*
+      Wedding weekend begins:
+      Friday, 17 September 2027 at 17:00
+      South African Standard Time is UTC+2.
+    */
+    const weddingDate = new Date("2027-09-17T17:00:00+02:00");
+
+    const daysElement = document.getElementById("days");
+    const hoursElement = document.getElementById("hours");
+    const minutesElement = document.getElementById("minutes");
+    const secondsElement = document.getElementById("seconds");
+    const countdownElement = document.getElementById("countdown");
+    const finishedMessage = document.getElementById("finished-message");
+
+    function updateCountdown() {
+      const now = new Date();
+      const remaining = weddingDate.getTime() - now.getTime();
+
+      if (remaining <= 0) {
+        countdownElement.style.display = "none";
+        finishedMessage.style.display = "block";
+        return;
+      }
+
+      const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (remaining / (1000 * 60 * 60)) % 24
+      );
+      const minutes = Math.floor(
+        (remaining / (1000 * 60)) % 60
+      );
+      const seconds = Math.floor(
+        (remaining / 1000) % 60
+      );
+
+      daysElement.textContent = String(days);
+      hoursElement.textContent = String(hours).padStart(2, "0");
+      minutesElement.textContent = String(minutes).padStart(2, "0");
+      secondsElement.textContent = String(seconds).padStart(2, "0");
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
 </body>
 </html>
